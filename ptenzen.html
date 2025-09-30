@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Math Practice - Powers of 10</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+                margin-top: 50px;
+            }
+            .problem {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+            .input-form {
+                margin-bottom: 20px;
+            }
+            input[type="number"] {
+                font-size: 18px;
+                padding: 5px;
+                width: 100px;
+            }
+            button {
+                font-size: 18px;
+                padding: 5px 15px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #45a049;
+            }
+            .feedback {
+                font-size: 20px;
+                font-weight: bold;
+                padding: 10px;
+                margin-top: 20px;
+                border-radius: 5px;
+                display: none;
+            }
+            .correct {
+                background-color: #4CAF50;
+                color: white;
+            }
+            .incorrect {
+                background-color: #f44336;
+                color: white;
+            }
+            .correct-answer {
+                margin-top: 10px;
+                font-size: 18px;
+            }
+            .result {
+                font-weight: bold;
+                margin-top: 20px;
+                font-size: 20px;
+            }
+            .math-expression {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                margin: 20px 0;
+            }
+            .superscript {
+                position: relative;
+                top: -0.5em;
+                font-size: 0.8em;
+            }
+        </style>
+        <script>
+            // Variables to store the numbers
+            let baseNumber;
+            let correctExponent;
+            let resultNumber;
+            
+            // Function to format number with spaces after every 3rd digit
+            function formatWithSpaces(numStr) {
+                // Split the number into integer and decimal parts if it has a decimal point
+                const parts = numStr.split('.');
+                const integerPart = parts[0];
+                
+                // Format the integer part with spaces
+                let formattedInteger = '';
+                for (let i = 0; i < integerPart.length; i++) {
+                    // Add a space after every 3rd digit from the right
+                    if (i > 0 && (integerPart.length - i) % 3 === 0) {
+                        formattedInteger += ' ';
+                    }
+                    formattedInteger += integerPart[i];
+                }
+                
+                // If there's a decimal part, format it too
+                if (parts.length > 1) {
+                    const decimalPart = parts[1];
+                    let formattedDecimal = '';
+                    
+                    for (let i = 0; i < decimalPart.length; i++) {
+                        // Add a space after every 3rd digit
+                        if (i > 0 && i % 3 === 0) {
+                            formattedDecimal += ' ';
+                        }
+                        formattedDecimal += decimalPart[i];
+                    }
+                    
+                    return formattedInteger + '.' + formattedDecimal;
+                }
+                
+                return formattedInteger;
+            }
+            
+            // Function to convert number to full decimal notation
+            function toFullDecimalNotation(num, exponent) {
+                // For positive exponents (large numbers)
+                if (exponent > 0) {
+                    // Multiply by 10^exponent by adding zeros
+                    return num.toString() + '0'.repeat(exponent);
+                } 
+                // For negative exponents (small numbers)
+                else if (exponent < 0) {
+                    const absExponent = Math.abs(exponent);
+                    // Create decimal with leading zeros
+                    if (absExponent >= 1) {
+                        return '0.' + '0'.repeat(absExponent - 1) + num.toString();
+                    } else {
+                        return num.toString();
+                    }
+                } 
+                // For exponent = 0
+                else {
+                    return num.toString();
+                }
+            }
+            
+            // Function to generate random numbers
+            function generateRandomNumbers() {
+                // Generate a base number between 1 and 9 (not 0)
+                baseNumber = Math.floor(Math.random() * 9) + 1; // 1 to 9
+                
+                // Generate an exponent between -10 and 10
+                correctExponent = Math.floor(Math.random() * 21) - 10; // -10 to 10
+                
+                // Calculate the result using full decimal notation
+                const decimalResult = toFullDecimalNotation(baseNumber, correctExponent);
+                
+                // Format the result with spaces
+                const formattedResult = formatWithSpaces(decimalResult);
+                
+                // Display the problem
+                document.getElementById('base-number').textContent = baseNumber;
+                document.getElementById('result-value').textContent = formattedResult;
+                
+                // Clear previous input and feedback
+                document.getElementById('exponent').value = '';
+                document.getElementById('feedback').style.display = 'none';
+                document.getElementById('correct-answer').textContent = '';
+                
+                // Focus on the input field
+                document.getElementById('exponent').focus();
+            }
+            
+            // Function to check the user's answer
+            function checkAnswer() {
+                const userExponent = parseInt(document.getElementById('exponent').value);
+                const feedbackElement = document.getElementById('feedback');
+                
+                if (userExponent === correctExponent) {
+                    // Correct answer
+                    feedbackElement.textContent = 'Correct!';
+                    feedbackElement.className = 'feedback correct';
+                    feedbackElement.style.display = 'block';
+                    
+                    // Generate new problem after 1 second
+                    setTimeout(generateRandomNumbers, 1000);
+                } else {
+                    // Incorrect answer
+                    feedbackElement.textContent = 'Incorrect!';
+                    feedbackElement.className = 'feedback incorrect';
+                    feedbackElement.style.display = 'block';
+                    
+                    // Show correct answer
+                    document.getElementById('correct-answer').textContent = 
+                        `The correct exponent is: ${correctExponent}`;
+                    
+                    // Generate new problem after 5 seconds
+                    setTimeout(generateRandomNumbers, 5000);
+                }
+            }
+            
+            // Initialize when the page loads
+            window.onload = function() {
+                generateRandomNumbers();
+                
+                // Add event listener for Enter key in the input field
+                document.getElementById('exponent').addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        checkAnswer();
+                    }
+                });
+            };
+        </script>
+    </head>
+    <body>
+        <h1>Math Practice - Powers of 10</h1>
+        
+        <div class="result">
+            Result = <span id="result-value">0</span>
+        </div>
+        
+        <div class="math-expression">
+            <span id="base-number">0</span> × 10<span class="superscript">to the power of</span>
+            <input type="number" id="exponent" placeholder="?" style="width: 60px;">
+        </div>
+        
+        <div class="input-form">
+            <button onclick="checkAnswer()">Check</button>
+        </div>
+        
+        <div class="feedback" id="feedback">
+            <!-- Feedback will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="correct-answer" id="correct-answer">
+            <!-- Correct answer will be inserted here when needed -->
+        </div>
+    </body>
+</html>
